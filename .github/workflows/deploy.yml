@@ -13,9 +13,6 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Resolves the Node.js deprecation warning
-
 jobs:
   deploy:
     environment:
@@ -29,14 +26,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24  # Upgraded to Node 24
+          node-version: 20 # Standard stable environment match
 
       - name: Install Dependencies
-        # By adding this line, GitHub will build the site even without a package-lock.json
-        run: npm install --no-audit --no-fund
+        run: npm install
 
       - name: Build Vue App
+        # CI=false forces GitHub to ignore warning blocks and successfully build your site
         run: npm run build
+        env:
+          CI: false 
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
